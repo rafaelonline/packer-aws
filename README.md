@@ -4,7 +4,7 @@ Repo criado para armazenar códigos Packer para AWS
 
 ## Pré-Requisitos
 
-Packer instalado, consulte a [documentação oficial](https://learn.hashicorp.com/packer/getting-started/install) em caso de dúvidas.
+Packer instalado, consulte a [documentação oficial](https://learn.hashicorp.com/packer/getting-started/install) em caso de dúvidas. Validado no Packer 1.6.4
 
 [Shared Credentials file](https://www.packer.io/docs/builders/amazon#shared-credentials-file) configurado. Veja como instalar o AWS CLI através da [documentação oficial](https://docs.aws.amazon.com/pt_br/cli/latest/userguide/cli-chap-welcome.html).
 
