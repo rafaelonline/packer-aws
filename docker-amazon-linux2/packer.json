@@ -1,0 +1,50 @@
+{
+  "variables": {
+    "name": null,
+    "region": null,
+    "profile": null
+  },
+
+  "builders": [
+    {
+      "profile": "{{user `profile`}}",
+      "type": "amazon-ebs",
+      "region": "{{user `region`}}",
+      "source_ami_filter": {
+          "filters": {
+            "virtualization-type": "hvm",
+            "name": "amzn2-ami-hvm-2.*-x86_64*",
+            "root-device-type": "ebs"
+          },
+          "owners": ["amazon"],
+          "most_recent": true
+        },
+      "instance_type": "t2.micro",
+      "encrypt_boot": false,
+      "ssh_username": "ec2-user",
+      "ami_name": "{{user `name`}} {{timestamp}}",
+      "ami_description": "from {{.SourceAMI}}",
+      "ami_users": "{{user `IDs`}}",
+      "tags": {
+        "OS_Version": "Amazon Linux",
+        "Release": "Latest",
+        "Base_AMI_Name": "{{ .SourceAMIName }}",
+        "Extra": "{{ .SourceAMITags.TagName }}"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "./playbook.yml",
+      "user": "ec2-user",
+      "extra_arguments": [
+        "--extra-vars",
+        "ansible_python_interpreter=/usr/bin/python"
+      ],
+      "ansible_env_vars": [
+        "ANSIBLE_HOST_KEY_CHECKING=False"
+      ]
+    }
+  ]
+}

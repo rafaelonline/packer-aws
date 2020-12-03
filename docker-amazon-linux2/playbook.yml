@@ -1,0 +1,61 @@
+- hosts: all
+  become: yes
+  become_method: sudo
+  gather_facts: false
+
+  tasks:   
+  - name: Update the repository cache
+    yum:
+      update_cache: yes
+      use_backend: yum
+    become: yes
+
+  - name: Upgrade all packages
+    yum:
+      name: '*'
+      state: latest
+    become: yes
+
+  - name: Install packages depends
+    yum:
+      name:
+        - yum-utils
+        - device-mapper-persistent-data
+        - lvm2
+        - amazon-linux-extras
+      state: latest
+      update_cache: yes
+    become: yes
+  
+  - name: Add extras repository
+    shell: yum-config-manager --enable extras
+
+  - name: Install docker-ce (centos) via amazon-linux-extras packages
+    shell: "amazon-linux-extras install docker=18.06.1 -y"
+  
+  - name: Enable Docker CE service at startup
+    service:
+      name: docker
+      state: started
+      enabled: yes
+
+  - name: Add remote "ec2-user" user to "docker" group
+    user:
+      name: "ec2-user"
+      group: "docker"
+      append: yes
+    become: yes
+
+  - name: Install docker-compose
+    get_url:
+      url : https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-x86_64
+      dest: /usr/local/bin/docker-compose
+      owner: root
+      group: docker
+      mode: 'u+x,g+x'
+    become: yes
+  
+  - name: yum-clean-metadata
+    command: yum clean metadata
+    args:
+      warn: no
